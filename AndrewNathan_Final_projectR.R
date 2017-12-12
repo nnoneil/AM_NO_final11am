@@ -8,10 +8,31 @@ library(ggplot2)
 
 ######### my attempt at stuff #########
 #files will be put in a github as part of rubrick, path will be:
-# 
+#                     https://github.com/nnoneil/AM_NO_final11am
+
 seed <- data.frame(read.csv("seedling_data_sep_DeadvAlive.csv")) 
 seed
 str(seed)
+#'data.frame'  :	"seed" this is a Key for the dataframe!
+#$ Sample      : "sample count number 
+#$ Line        : "seed line, this includes crossed mutant line deliniated by '/'."
+#                   lower case is homozygous mutant (pp), heterozygous/+ is (Pp), wild type gene is (PP)
+#                   example [pdx3] homozygous is (pp), cross line [pdx3 rus1/+] heterozygous is (pp/Rr)
+#$ Gen         : "seed line generation; parental is 1, self polinated het. is 2, mutant bearing homozygous is 3"
+#$ S_Count     : "observed calculated seed count"
+#$ DvA         : "alive germinating seeds vs. dead or albino arrested seeds"
+#$ Pheno       : "observed recorded phenotype of seed sample"
+#$ Geno        : "detected Genotype of seed sample"
+#$ RootLg      : "Measured Root length of seedlings (mm)"
+#$ ShootWd     : "leaf span or shoot span of seedlings (mm)"
+#$ INTmg       : "Wet seed weight at plating (mg)"
+#$ FINmg       : "Wet seed weight at tissue collection (mg)"
+#$ DpG         : "(Days Post Germination) day seedlings are examined and data is collected"
+#$ SC_Total    : "S_Count total of alive and dead seeds e.g. SAMPLE SIZE"
+#$ SC_PerT     : "S_Count calculated percent in respect to total sample size"
+#$ SC_STDEV_Tot: "S_Count standard deviation from respective Total 
+#$ SC_STDEV_WT : "S_Count standard deviation from WT by Generation num"
+
 head(seed)
 tail(seed)
 Dead <- seed$S_Count[which(seed$DvA == "DEAD")]
