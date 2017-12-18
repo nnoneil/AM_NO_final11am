@@ -97,8 +97,21 @@ ggplot(aes(y = S_Count, x = DVA_Geno), data = seed) + geom_boxplot()
 ggplot(aes(y = S_Count, x = DvA, fill = Geno), data = seed) + geom_boxplot()
 ggplot(aes(y = S_Count, x = DvA, fill = Pheno), data = seed) + geom_boxplot() #!
 
-qplot(y = S_Count, x = SC_Total, data = seed,facets = .~DvA) + geom_smooth(method = lm)#!!
+ggplot(aes(y = SC_STDEV_WT, x = DvA, fill = Pheno), data = seed) + geom_boxplot()
 
+### plot for print!
+qplot(y = S_Count, x = SC_Total, data = seed,fill = DvA, facets = .~Gen) + geom_smooth(method = lm)#!!
+#analysis#
+#   split by generation in this graph we see seec count split by seed count total for alive vs. Dead seedlings.
+#   the resulting interpretation for this graph is that the linear increase in alive seeds is lost to an increase in dead seed count
+#     at the point of mutant penatrance or genotype and phenoytype observation.
+#   from this we can conclude that while total seed count is lower the induced mutant condution results in a linar increase in leathality.
+
+ggplot(aes(y = S_Count, x = DvA, fill = Pheno), data = seed) + geom_boxplot()
+#analysis#
+#   this plot shows the calculated deviation of seed counts separated by their expected phenotype cross.
+#   we observe a vast difference between the seed counts of single mutants to crosses generated as segregated by alive or dead seeds.
+#   of note, we see that single mutants PP3 RR1 and SS4 show a large increase in seed count as compared to dead. 
 ##### Learning ggplot! #####
 ?ggplot
 #random data example....
@@ -151,27 +164,6 @@ boxplot(df$boxthis ~ df$f2,            # x variable, y variable
         cex.main = 2)                                  # Size of the plot title
 
 stop("running line 152 stop")
-##### talk with pleuni 12/07/17######
-plot(1,1,col=0,xlim = c(.5, 12.5), ylim = c(0,200),
-     xlab = "Generation", ylab = "Seed Count", main = "Phenotype Segrigation by Seed Count")
-    points(n$total[which(n$Pheno == "WT")])
-    points(n$total[which(n$Pheno == "HZM")])
-    points(n$total[which(n$Pheno == "HE")])
-    points(n$total[which(n$Pheno == "HZM/HE")])
-    
-    value = points(n$total[which(n$Pheno == "WT")])
-    rep(1,length(yvalue))
-n
-n$alive[which(n$genotype=="HZM")]
-n$alive[which(n$genotype=="HE")]
-n$alive[which(n$genotype=="HZM/HE")]
-        
-dfx <- read.csv("11AM_Influ_team/seedling_data.csv")
-str(dfx)
-head(dfx)
-df$Pheno
-dfx
-stop("running stop line 173")
 ##### test #####
 n <- read.csv("11AM_Influ_team/seedling_data.csv")
 
