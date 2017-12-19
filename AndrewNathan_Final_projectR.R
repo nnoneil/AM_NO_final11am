@@ -13,7 +13,6 @@ library(Hmisc)
   library(survival)
   library(Formula)
 library(seqinr)
-######### my attempt at stuff #########
 #files will be put in a github as part of rubrick, path will be:
 #                     https://github.com/nnoneil/AM_NO_final11am
 
@@ -40,15 +39,16 @@ str(seed)
 #$ SC_STDEV_Tot: "S_Count standard deviation from respective Total 
 #$ SC_STDEV_WT : "S_Count standard deviation from WT by Generation num"
 
+#step 1: what does the data look like? how can we compare the factors and numerators?
 head(seed)
 tail(seed)
-Dead <- seed$S_Count[which(seed$DvA == "DEAD")]
-Alive <- seed$S_Count[which(seed$DvA == "ALIVE")]
+
+#first we conduct simple comparisons by quick plot (qplot)
 
 #phenotype by seed count
-qplot(S_Count, data = seed, color = DvA) #interesting! 
+qplot(S_Count, data = seed, fill = DvA) #interesting! 
 qplot(Pheno,S_Count, data = seed, facets = .~DvA)# interesting!
-qplot(Pheno,S_Count, data = seed, facets = .~DvA)+ geom_smooth(method = lm)
+qplot(Pheno,S_Count, data = seed, facets = .~DvA)+ geom_smooth(method = lm)# each point is considered a seprate line, no connected data...
 #Genotype by seed count
 qplot(Geno,S_Count, data = seed, color = DvA)
 qplot(Geno,S_Count, data = seed, facets = .~DvA)
@@ -76,15 +76,12 @@ qplot(log(SC_Total),log(SC_STDEV_WT), data = seed, color = DvA)
 qplot(SC_Total,S_Count, data = seed, facets = .~DvA)
 qplot(log(SC_Total),log(seed$SC_STDEV_WT), data = seed, facets = .~DvA)
 
-
-#examples of using ggplot2 for 2 factor box plotting
-head(df)
-ggplot(aes(y = boxthis, x = f2, fill = f1), data = df) + geom_boxplot()
+#### step 2 #### 
+#Using ggplot to create more complex graphs to show us our data.
 
 #using ggplot2 for 2 factor box plotting of the standard DEV from WT 
 head(seed)
-seed$DVA_Pheno <- interaction(seed$DvA, seed$Pheno)
-seed$DVA_Geno <- interaction(seed$DvA, seed$Geno)
+
 
 ggplot(aes(y = SC_STDEV_WT, x = DVA_Pheno), data = seed) + geom_boxplot()
 ggplot(aes(y = SC_STDEV_WT, x = DVA_Geno), data = seed) + geom_boxplot()
@@ -104,7 +101,13 @@ ggplot(aes(y = S_Count, x = DvA, fill = Pheno), data = seed) + geom_boxplot() #!
 ggplot(aes(y = SC_STDEV_WT, x = DvA, fill = Pheno), data = seed) + geom_boxplot()
 m <- ggplot(aes(S_Count, SC_Total),data = seed)
 m + geom_raster(aes(fill = DvA)) + geom_smooth(method = lm)
-### plot for print!
+
+
+#### step 3 ####
+### decided what plot represents the data accuratly and answers our research question.
+# plots for print!
+
+####################################figure 1
 qplot(y = S_Count, x = SC_Total, 
       data = seed,
       color = DvA ,                                                                #
@@ -118,15 +121,15 @@ qplot(y = S_Count, x = SC_Total,
 #   the resulting interpretation for this graph is that the linear increase in alive seeds is lost to an increase in dead seed count
 #     at the point of mutant penatrance or genotype and phenoytype observation.
 #   from this we can conclude that while total seed count is lower the induced mutant condution results in a linar increase in leathality.
-?ggplot2::stat_ecdf
-?ggplot2::stat_summary_bin
-d <- ggplot(mtcars, aes(cyl, mpg)) + geom_point()
-d + stat_summary(fun.data = "mean_cl_boot", colour = "red", size = 2)
-
-f <- ggplot(aes(y = S_Count, x = DvA, fill = Pheno),data = seed) 
-fi <- f + geom_boxplot()
-fig <- fi + 
-fig2 <- fig + labs(x = "new x label", y = "new y label", title = "New plot title", subtitle = "A subtitle")
+?ggplot(geom_smooth(lm))
+####################################figure 2
+f <- ggplot(aes(y = S_Count, x = DvA, fill = Pheno),data = seed)                                   # constructed blank plot for data 
+fi <- f + geom_boxplot()                                                                           # determination of how the prior data sets will be presented [boxplot]
+fig <- fi + geom_smooth(method = lm)                                                               # geom argument, this smooths out the plot presentation. cleans up aes arguments for better presentation. 
+fig2 <- fig + labs(x = "Genetic assesment of segrigated seeds",                                    # labs adds new labels over the prior to ggplot. 
+                   y = "seed count",                                                               # y label.
+                   title = "Seed Count Distribution From Mutant Screening",                        # title .
+                   subtitle = "homozygous single mutants and heterozygous double mutants shown")   # subtitle text.
 fig2
 #analysis#
 #   this plot shows the calculated deviation of seed counts separated by their expected phenotype cross.
@@ -135,15 +138,18 @@ fig2
 
 
 ##### Learning ggplot! #####
+# below is code used to understand ggplot and its use
 # generate a random data example....
-df <- data.frame(f1=factor(rbinom(100, 1, 0.45), label=c("WT","HZM")), 
-                 f2=factor(rbinom(100, 1, 0.45), label=c("Alive","Dead")),
+df <- data.frame(f1=factor(rbinom(100, 1, 0.45), label=c("x","y")), 
+                 f2=factor(rbinom(100, 1, 0.45), label=c("up","down")),
                  boxthis=rnorm(100))
 df
 df$f1f2 <- interaction(df$f1, df$f2)
-
+head(df)
 #?ggplot
 ggplot(aes(y = boxthis, x = f1f2), data = df) + geom_boxplot()
+ggplot(aes(y = boxthis, x = f2, fill = f1), data = df) + geom_boxplot()
+#examples of using ggplot2 for 2 factor box plotting
 ggplot(aes(y = boxthis, x = f2, fill = f1), data = df) + geom_boxplot()
 
 # to use ggplot2 I need to manipulate the data.frame better to show my output. 
@@ -172,48 +178,19 @@ qplot(log(displ), log(hwy), data = mpg, facets = .~drv) + geom_smooth(method = l
 ggplot(aes(y = n$S_Count, x = f1f2), data = n) + geom_boxplot()
 ggplot(aes(y = boxthis, x = f2, fill = f1), data = df) + geom_boxplot()
 
-stop("running stop line 150+")
+stop("running stop line 170+")
 #attempt at boxplot for data 1
-boxplot(df$boxthis ~ df$f2,            # x variable, y variable
+boxplot(df$boxthis ~ df$f2,                            # x variable, y variable
         notch = F,                                     # Draw notch
         las = 1,                                       # Orientate the axis tick labels
-        xlab = "Generation 1",                             # X-axis label
-        ylab = "Seed Count",                         # Y-axis label
-        main = "Phenotype Segrigation by Seed Count",  # Plot title
+        xlab = "XLAB",                                 # X-axis label
+        ylab = "YLAB",                                 # Y-axis label
+        main = "A PLOT",                               # A Plot title
         cex.lab = 1.5,                                 # Size of axis labels
         cex.axis = 1.5,                                # Size of the tick mark labels
         cex.main = 2)                                  # Size of the plot title
 
-
-##### test #####
-n <- read.csv("11AM_Influ_team/seedling_data.csv")
-
-# look at n, how does the data.frame pan out. i.e. what are the col vs row within. 
-str(n)
-head(n)
-plot(c(n$alive, n$dead))
-n$genotype
-which(n$genotype=="MODEL")
-which(n$genotype=="HE")
-n$alive[which(n$genotype=="MODEL")]
-n$alive[which(n$genotype=="WT")]
-n$alive[which(n$genotype=="HZM")]
-n$alive[which(n$genotype=="HE")]
-n$alive[which(n$genotype=="HZM/HE")]
-
-n$dead[which(n$genotype=="MODEL")]
-n$dead[which(n$genotype=="WT")]
-n$alive[which(n$genotype=="HZM")]
-n$alive[which(n$genotype=="HE")]
-n$alive[which(n$genotype=="HZM/HE")]
-
-
-
-plot(x = c(n$alive, n$dead), #plot it!
-             xlab = "Generation", ylab = "Seed Count", main = "Phenotype Segrigation by Seed Count",
-             col = (as.integer(n$makesCpG))
-)
-
 ##### end of code #####
 
-stop("running stop line 200+")
+
+stop("running stop line 190+")
